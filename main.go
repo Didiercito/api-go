@@ -30,7 +30,7 @@ func main() {
 
 	r := mux.NewRouter()
 
-	r.Use(middlewareCORS)
+	r.Use(middlewareCORS) 
 	go rabbitmq.StartUsuarioWorker()
 
 	api := r.PathPrefix("/api/v1").Subrouter()
@@ -41,15 +41,16 @@ func main() {
 }
 
 func middlewareCORS(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Access-Control-Allow-Origin", "*")
+        w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+        w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
-		if r.Method == "OPTIONS" {
-			return
-		}
+        if r.Method == "OPTIONS" {
+            w.WriteHeader(http.StatusOK) 
+            return
+        }
 
-		next.ServeHTTP(w, r)
-	})
+        next.ServeHTTP(w, r)
+    })
 }
